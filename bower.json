@@ -1,0 +1,21 @@
+{
+  "name": "echarts-develop",
+  "version": "0.0.0",
+  "homepage": "https://github.com/hushicai/echarts-develop",
+  "authors": [
+    "hushicai <bluthcy@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "dep",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "esl": "~2.0.6",
+    "jquery": "~2.1.4"
+  }
+}
