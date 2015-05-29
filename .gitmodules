@@ -3,4 +3,4 @@
 	url = git@github.com:ecomfe/zrender.git
 [submodule "submodule/echarts"]
 	path = submodule/echarts
-	url = git@github.com:ecomfe/echarts.git
+	url = git@github.com:hushicai/echarts.git
