@@ -1,3 +1,8 @@
+/**
+ * @file echarts-optimizer-conf
+ * @author hushicai(bluthcy@gmail.com)
+ */
+
 exports.modules = {
     main: {
         name: 'echarts/echarts',

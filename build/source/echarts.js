@@ -1621,7 +1621,6 @@ var esl;
 define('echarts', ['echarts/echarts'], function (main) {return main;});
 define('echarts/echarts', [
     'require',
-    './macro',
     './config',
     'zrender/tool/util',
     'zrender/tool/event',
@@ -1648,7 +1647,6 @@ define('echarts/echarts', [
     './theme/macarons',
     './theme/infographic'
 ], function (require) {
-    require('./macro');
     var ecConfig = require('./config');
     var zrUtil = require('zrender/tool/util');
     var zrEvent = require('zrender/tool/event');
@@ -1657,8 +1655,8 @@ define('echarts/echarts', [
     var _idBase = new Date() - 0;
     var _instances = {};
     var DOM_ATTRIBUTE_KEY = '_echarts_instance_';
-    self.version = '2.2.2';
-    self.dependencies = { zrender: '2.0.8' };
+    self.version = '2.2.3';
+    self.dependencies = { zrender: '2.0.9' };
     self.init = function (dom, theme) {
         var zrender = require('zrender');
         if (zrender.version.replace('.', '') - 0 < self.dependencies.zrender.replace('.', '') - 0) {
@@ -2695,49 +2693,7 @@ define('echarts/echarts', [
         }
     };
     return self;
-});(function (global) {
-    var DefaultEnv = {};
-    var env = DefaultEnv;
-    function accessByDot(obj, key) {
-        key = (key || '').split('.');
-        while (obj && key.length) {
-            obj = obj[key.shift()];
-        }
-        return obj;
-    }
-    var registry = {
-        EC_DEFINED: function (key) {
-            return !!accessByDot(env, key);
-        },
-        EC_NOT_DEFINED: function (key) {
-            return !accessByDot(env, key);
-        },
-        EC_EQUAL: function (key, value) {
-            return accessByDot(env, key) === value;
-        },
-        EC_NOT_EQUAL: function (key, value) {
-            return accessByDot(env, key) !== value;
-        }
-    };
-    var macro = {
-        setEnv: function (cfg) {
-            if (cfg) {
-                env = cfg;
-            }
-        },
-        registry: registry
-    };
-    for (var key in macro.registry) {
-        if (macro.registry.hasOwnProperty(key)) {
-            global[key] = macro.registry[key];
-        }
-    }
-    if (typeof exports === 'object' && typeof module === 'object') {
-        exports = module.exports = macro;
-    } else if (typeof define === 'function' && define.amd) {
-        define('echarts/macro', [], macro);
-    }
-}(this));define('echarts/config', [], function () {
+});define('echarts/config', [], function () {
     var config = {
         CHART_TYPE_LINE: 'line',
         CHART_TYPE_BAR: 'bar',
