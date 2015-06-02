@@ -1,6 +1,6 @@
-[submodule "submodule/zrender"]
-	path = submodule/zrender
-	url = git@github.com:ecomfe/zrender.git
 [submodule "submodule/echarts"]
 	path = submodule/echarts
 	url = git@github.com:hushicai/echarts.git
+[submodule "submodule/zrender"]
+	path = submodule/zrender
+	url = git@github.com:hushicai/zrender.git

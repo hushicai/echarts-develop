@@ -129,7 +129,6 @@ var require, define;
 define('echarts', ['echarts/echarts'], function (main) {return main;});
 define('echarts/echarts', [
     'require',
-    './macro',
     './config',
     'zrender/tool/util',
     'zrender/tool/event',
@@ -156,7 +155,6 @@ define('echarts/echarts', [
     './theme/macarons',
     './theme/infographic'
 ], function (require) {
-    require('./macro');
     var ecConfig = require('./config');
     var zrUtil = require('zrender/tool/util');
     var zrEvent = require('zrender/tool/event');
@@ -1203,49 +1201,7 @@ define('echarts/echarts', [
         }
     };
     return self;
-});(function (global) {
-    var DefaultEnv = {};
-    var env = DefaultEnv;
-    function accessByDot(obj, key) {
-        key = (key || '').split('.');
-        while (obj && key.length) {
-            obj = obj[key.shift()];
-        }
-        return obj;
-    }
-    var registry = {
-        EC_DEFINED: function (key) {
-            return !!accessByDot(env, key);
-        },
-        EC_NOT_DEFINED: function (key) {
-            return !accessByDot(env, key);
-        },
-        EC_EQUAL: function (key, value) {
-            return accessByDot(env, key) === value;
-        },
-        EC_NOT_EQUAL: function (key, value) {
-            return accessByDot(env, key) !== value;
-        }
-    };
-    var macro = {
-        setEnv: function (cfg) {
-            if (cfg) {
-                env = cfg;
-            }
-        },
-        registry: registry
-    };
-    for (var key in macro.registry) {
-        if (macro.registry.hasOwnProperty(key)) {
-            global[key] = macro.registry[key];
-        }
-    }
-    if (typeof exports === 'object' && typeof module === 'object') {
-        exports = module.exports = macro;
-    } else if (typeof define === 'function' && define.amd) {
-        define('echarts/macro', [], macro);
-    }
-}(this));define('echarts/config', [], function () {
+});define('echarts/config', [], function () {
     var config = {
         CHART_TYPE_LINE: 'line',
         CHART_TYPE_BAR: 'bar',
@@ -12862,11 +12818,13 @@ define('zrender/zrender', [
     return Transformable;
 });define('zrender/Group', [
     'require',
+    './macro',
     './tool/guid',
     './tool/util',
     './mixin/Transformable',
     './mixin/Eventful'
 ], function (require) {
+    var macro = require('./macro');
     var guid = require('./tool/guid');
     var util = require('./tool/util');
     var Transformable = require('./mixin/Transformable');
@@ -12985,7 +12943,41 @@ define('zrender/zrender', [
     util.merge(Group.prototype, Transformable.prototype, true);
     util.merge(Group.prototype, Eventful.prototype, true);
     return Group;
-});define('zrender/animation/Clip', [
+});(function (global) {
+    var DefaultEnv = {};
+    var env = DefaultEnv;
+    function accessByDot(obj, key) {
+        key = (key || '').split('.');
+        while (obj && key.length) {
+            obj = obj[key.shift()];
+        }
+        return obj;
+    }
+    var macro = {
+        setEnv: function (cfg) {
+            if (cfg) {
+                env = cfg;
+            }
+        },
+        isDefined: function (key) {
+            return !!accessByDot(env, key);
+        },
+        isNotDefined: function (key) {
+            return !accessByDot(env, key);
+        },
+        isEqual: function (key, value) {
+            return accessByDot(env, key) === value;
+        },
+        isNotEqual: function (key, value) {
+            return accessByDot(env, key) !== value;
+        }
+    };
+    if (typeof exports === 'object' && typeof module === 'object') {
+        exports = module.exports = macro;
+    } else if (typeof define === 'function' && define.amd) {
+        define('zrender/macro', [], macro);
+    }
+}(this));define('zrender/animation/Clip', [
     'require',
     './easing'
 ], function (require) {
