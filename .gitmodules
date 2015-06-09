@@ -1,6 +1,12 @@
-[submodule "submodule/echarts"]
-	path = submodule/echarts
-	url = git@github.com:hushicai/echarts.git
-[submodule "submodule/zrender"]
-	path = submodule/zrender
+[submodule "submodule/ecomfe/zrender"]
+	path = submodule/ecomfe/zrender
+	url = git@github.com:ecomfe/zrender.git
+[submodule "submodule/hushicai/zrender"]
+	path = submodule/hushicai/zrender
 	url = git@github.com:hushicai/zrender.git
+[submodule "submodule/hushicai/echarts"]
+	path = submodule/hushicai/echarts
+	url = git@github.com:hushicai/echarts.git
+[submodule "submodule/ecomfe/echarts"]
+	path = submodule/ecomfe/echarts
+	url = git@github.com:ecomfe/echarts.git
