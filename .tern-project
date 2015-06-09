@@ -4,7 +4,19 @@
     ],
     "plugins": {
         "requirejs": {
-            "baseUrl": "./"
+            "baseUrl": "./",
+            "packages": [
+                {
+                    "name": "echarts",
+                    "location": "./submodule/echarts/src",
+                    "main": "echarts"
+                },
+                {
+                    "name": "zrender",
+                    "location": "./submodule/zrender/src",
+                    "main": "zrender"
+                }
+            ]
         }
     }
 }

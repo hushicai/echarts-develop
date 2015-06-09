@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>svg</title>
+</head>
+
+<body>
+    <div id="test" style="width: 800px; height: 400px;"></div>
+    <div id="source" style="display: none;">
+        <?xml version="1.0" encoding="utf-8"?>
+        <!-- Generator: Adobe Illustrator 15.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+        <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+        <svg version="1.1" id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+        width="841.89px" height="595.275px" viewBox="0 0 841.89 595.275" enable-background="new 0 0 841.89 595.275"
+        xml:space="preserve">
+        <rect name="草地" x="44.858" y="13.177" fill="#3DB44A" width="757.461" height="568.099"/>
+        <rect name="草地" x="76.332" y="13.177" fill="#23A94A" width="53.424" height="568.099"/>
+        <rect name="草地" x="183.179" y="13.177" fill="#23A94A" width="53.424" height="568.099"/>
+        <rect name="草地" x="290.028" y="13.177" fill="#23A94A" width="53.424" height="568.099"/>
+        <rect name="草地" x="396.879" y="13.177" fill="#23A94A" width="53.419" height="568.099"/>
+        <rect name="草地" x="503.722" y="13.177" fill="#23A94A" width="53.421" height="568.099"/>
+        <rect name="草地" x="610.564" y="13.177" fill="#23A94A" width="53.427" height="568.099"/>
+        <rect name="草地" x="717.416" y="13.177" fill="#23A94A" width="53.424" height="568.099"/>
+
+        <rect name="球场区1" x="97.096" y="49.827" fill="none" stroke="#FFFFFF" stroke-width="3.0821" width="328.274" height="493.141"/>
+        <rect name="球场区2" x="425.588" y="49.827" fill="none" stroke="#FFFFFF" stroke-width="3.0821" width="328.274" height="493.141"/>
+
+        <circle name="中圈" fill="none" stroke="#FFFFFF" stroke-width="3.0821" cx="425.127" cy="296.913" r="50.683"/>
+        <circle name="开球点" fill="#FFFFFF" cx="425.126" cy="296.913" r="4.109"/>
+
+        <path name="禁区弧线1" fill="none" stroke="#FFFFFF" stroke-width="3.0821" d="M188.312,257.923c11.29,9.231,18.496,23.27,18.496,38.99
+        c0,15.718-7.203,29.753-18.488,38.982"/>
+        <rect name="禁区1" fill="none" x="96.879" y="186.983"  stroke="#FFFFFF" stroke-width="3.0821" width="91.438" height="220.885"/>
+        <rect name="球门区1" fill="none" x="96.879" y="246.569"  stroke="#FFFFFF" stroke-width="3.0821" width="30.822" height="99.657"/>
+        <rect name="球门1" fill="none" x="80.442" y="276.365"  stroke="#FFFFFF" stroke-width="3.0821" width="16.437" height="40.066"/>
+        <circle name="点球点1" fill="#FFFFFF" cx="156.467" cy="296.913" r="4.11"/>
+
+        <path name="禁区弧线2" fill="none" stroke="#FFFFFF" stroke-width="3.0821" d="M661.941,336.93c-11.291-9.232-18.496-23.27-18.496-38.99
+        c0-15.718,7.203-29.753,18.487-38.983"/>
+        <rect name="禁区2" fill="none" x="661.938" y="186.983"  stroke="#FFFFFF" stroke-width="3.0821" width="91.435" height="220.885"/>
+        <rect name="球门区2" fill="none" x="722.551" y="248.625"  stroke="#FFFFFF" stroke-width="3.0821" width="30.822" height="99.658"/>
+        <rect name="球门2" fill="none" x="753.373" y="278.421"  stroke="#FFFFFF" stroke-width="3.0821" width="16.439" height="40.066"/>
+        <circle name="点球点2" fill="#FFFFFF" cx="693.786" cy="297.939" r="4.108"/>
+
+        <path name="角球1" fill="none" stroke="#FFFFFF" stroke-width="3.0821" d="M114.858,50.58c0,9.93-8.051,17.981-17.981,17.981"/>
+        <path name="角球2" fill="none" stroke="#FFFFFF" stroke-width="3.0821" d="M96.879,525.502c9.93,0,17.979,8.052,17.979,17.981"/>
+        <path name="角球3" fill="none" stroke="#FFFFFF" stroke-width="3.0821" d="M735.59,543.483c0-9.93,8.049-17.981,17.981-17.981"/>
+        <path name="角球4" fill="none" stroke="#FFFFFF" stroke-width="3.0821" d="M753.568,68.561c-9.93,0-17.979-8.051-17.979-17.981"/>
+
+        </svg>
+    </div>
+    <link rel="import" href="./__script.html" />
+    <script>
+        require(['echarts', 'echarts/chart/map', 'echarts/util/mapData/params'], function(echarts, map, mapDataParams) {
+            var str = document.getElementById('source').innerHTML;
+            var xml = new DOMParser().parseFromString(str, 'text/xml');
+            // 自定义扩展图表类型：mapType = body
+            mapDataParams.params.football = {
+                getGeoJson: function(callback) {
+                    callback(xml);
+                }
+            }
+            var option = {
+                backgroundColor: '#228b22',
+                title: {
+                    text: '2014世界杯',
+                    subtext: '地图SVG扩展',
+                    textStyle: {
+                        color: '#fff'
+                    }
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                toolbox: {
+                    show: true,
+                    feature: {
+                        mark: {
+                            show: true
+                        },
+                        dataView: {
+                            show: true,
+                            readOnly: false
+                        },
+                        restore: {
+                            show: true
+                        },
+                        saveAsImage: {
+                            show: true
+                        }
+                    }
+                },
+                series: [{
+                    name: '2014世界杯',
+                    type: 'map',
+                    mapType: 'football', // 自定义扩展图表类型
+                    roam: true,
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: true
+                            }
+                        },
+                        emphasis: {
+                            label: {
+                                show: true
+                            }
+                        }
+                    },
+                    data: [{
+                        name: '草地',
+                        hoverable: false,
+                        itemStyle: {
+                            normal: {
+                                label: {
+                                    show: false
+                                }
+                            }
+                        }
+                    }],
+                    textFixed: {
+                        '球门区1': [0, -20],
+                        '球门区2': [0, -20],
+                        '禁区1': [10, 20],
+                        '禁区2': [-10, 20],
+                        '禁区弧线1': [0, -20],
+                        '禁区弧线2': [0, -20],
+                        '中圈': [0, -20],
+                        '开球点': [0, 20]
+                    },
+                    markPoint: {
+                        symbol: 'circle',
+                        symbolSize: 20,
+                        effect: {
+                            show: true,
+                            color: 'lime'
+                        },
+                        data: [{
+                            name: '开球点',
+                            value: 100,
+                            geoCoord: [425.126, 296.913]
+                        }]
+                    },
+                    markLine: {
+                        smooth: true,
+                        effect: {
+                            show: true,
+                            scaleSize: 1,
+                            period: 20,
+                            color: '#fff',
+                            shadowBlur: 5
+                        },
+                        itemStyle: {
+                            normal: {
+                                borderWidth: 1,
+                                color: 'gold',
+                                lineStyle: {
+                                    type: 'solid'
+                                }
+                            }
+                        },
+                        data: [
+                            [{
+                                name: '1',
+                                geoCoord: [96.879, 186.983]
+                            }, {
+                                name: '2',
+                                geoCoord: [693.786, 297.939]
+                            }],
+                            [{
+                                name: '2',
+                                geoCoord: [753.373, 186.983]
+                            }, {
+                                name: '1',
+                                geoCoord: [156.467, 296.913]
+                            }]
+                        ]
+                    }
+                }]
+            };
+
+            var el = document.getElementById('test');
+            var ec = echarts.init(el);
+            ec.setOption(option);
+        });
+    </script>
+</body>
+
+</html>

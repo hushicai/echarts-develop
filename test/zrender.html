@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>zrender</title>
+</head>
+<body>
+    <div id="test" style="width: 800px; height: 400px;"></div>
+    <link rel="import" href="./__script.html" />
+    <script>
+        require(['zrender', 'zrender/shape/Circle'], function (zrender, Circle) {
+            var el  = document.getElementById('test');
+            var zr = zrender.init(el);
+            var circle = new Circle({
+                style: {
+                    x: 100,
+                    y: 100,
+                    r: 50,
+                    color: 'red'
+                }
+            });
+            zr.addShape(circle);
+            zr.render();
+        });
+    </script>
+</body>
+</html>
