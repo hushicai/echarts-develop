@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>tree</title>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="test" style="width: 400px; height: 400px;"></div>
+    <link rel="import" href="./__script.html" />
+    <script>
+        require(
+        [
+            'echarts',
+            'echarts/chart/tree'
+        ], function (ec) {
+            var myChart = ec.init(document.getElementById('test'));
+            var option = {
+                title: {
+                    text: '级别对应人员图'
+                },
+                series: [
+                    {
+                        type: 'tree',
+                        name: "Force tree",
+                        rootLocation: {x: 'center', y: 50},
+                        data: [
+                            {
+                                name: '根节点',
+                                value: 60,
+                                children: [
+                                    {
+                                        name: '节点2',
+                                        value: 40
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            };
+            myChart.setOption(option);
+        });
+    </script>
+</body>
+</html>
