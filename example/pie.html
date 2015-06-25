@@ -27,6 +27,11 @@
                 }
             ]
             var option = {
+                title: {
+                    text: 'test',
+                    x: 'center',
+                    y: 'center'
+                },
                 legend: {
                     orient: 'vertical',
                     x: 'left',
@@ -44,11 +49,12 @@
                     data: ['直接访问', '邮件营销']
                 },
                 series: [
-                {
-                    name: '访问来源',
-                    type: 'pie',
-                    data: data
-                }
+                    {
+                        name: '访问来源',
+                        type: 'pie',
+                        data: data,
+                        radius: ['50%', '70%']
+                    }
                 ]
             };
 
