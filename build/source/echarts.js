@@ -1655,8 +1655,8 @@ define('echarts/echarts', [
     var _idBase = new Date() - 0;
     var _instances = {};
     var DOM_ATTRIBUTE_KEY = '_echarts_instance_';
-    self.version = '2.2.3';
-    self.dependencies = { zrender: '2.0.9' };
+    self.version = '2.2.5';
+    self.dependencies = { zrender: '2.1.0' };
     self.init = function (dom, theme) {
         var zrender = require('zrender');
         if (zrender.version.replace('.', '') - 0 < self.dependencies.zrender.replace('.', '') - 0) {
@@ -2197,11 +2197,12 @@ define('echarts/echarts', [
                 return this._setTimelineOption(option);
             }
         },
-        _setOption: function (option, notMerge) {
+        _setOption: function (option, notMerge, keepTimeLine) {
             if (!notMerge && this._option) {
                 this._option = zrUtil.merge(this.getOption(), zrUtil.clone(option), true);
             } else {
                 this._option = zrUtil.clone(option);
+                !keepTimeLine && this._timeline && this._timeline.dispose();
             }
             this._optionRestore = zrUtil.clone(this._option);
             if (!this._option.series || this._option.series.length === 0) {
@@ -2266,6 +2267,7 @@ define('echarts/echarts', [
                 ]];
             var magicOption = this.getOption();
             var optionRestore = this._optionRestore;
+            var self = this;
             for (var i = 0, l = params.length; i < l; i++) {
                 seriesIdx = params[i][0];
                 data = params[i][1];
@@ -2344,7 +2346,6 @@ define('echarts/echarts', [
             }
             this.component.dataZoom && this.component.dataZoom.syncOption(magicOption);
             this._option = magicOption;
-            var self = this;
             function animationDone() {
                 if (!self._zr) {
                     return;
@@ -2712,6 +2713,7 @@ define('echarts/echarts', [
         CHART_TYPE_FUNNEL: 'funnel',
         CHART_TYPE_EVENTRIVER: 'eventRiver',
         CHART_TYPE_WORDCLOUD: 'wordCloud',
+        CHART_TYPE_HEATMAP: 'heatmap',
         COMPONENT_TYPE_TITLE: 'title',
         COMPONENT_TYPE_LEGEND: 'legend',
         COMPONENT_TYPE_DATARANGE: 'dataRange',
@@ -2849,6 +2851,7 @@ define('echarts/echarts', [
         },
         DRAG_ENABLE_TIME: 120,
         EFFECT_ZLEVEL: 10,
+        effectBlendAlpha: 0.95,
         symbolList: [
             'circle',
             'rectangle',
@@ -3158,7 +3161,7 @@ define('zrender/zrender', [
     var Animation = require('./animation/Animation');
     var _instances = {};
     var zrender = {};
-    zrender.version = '2.0.9';
+    zrender.version = '2.1.0';
     zrender.init = function (dom) {
         var zr = new ZRender(guid(), dom);
         _instances[zr.id] = zr;
@@ -3416,6 +3419,7 @@ define('zrender/zrender', [
             DROP: 'drop',
             touchClickDelay: 300
         },
+        elementClassName: 'zr-element',
         catchBrushException: false,
         debugMode: 0,
         devicePixelRatio: Math.max(window.devicePixelRatio || 1, 1)
@@ -3519,9 +3523,10 @@ define('zrender/zrender', [
             var value = ecData.get(shape, 'value');
             var seriesName = ecData.get(shape, 'series') != null ? ecData.get(shape, 'series').name : '';
             var font = this.getFont(this.option.island.textStyle);
+            var islandOption = this.option.island;
             var islandShape = {
-                zlevel: this.getZlevelBase(),
-                z: this.getZBase(),
+                zlevel: islandOption.zlevel,
+                z: islandOption.z,
                 style: {
                     x: shape.style.x,
                     y: shape.style.y,
@@ -5968,6 +5973,9 @@ define('zrender/zrender', [
                 this._setSelectedMap();
                 this._axisLineWidth = this.option.tooltip.axisPointer.lineStyle.width;
                 this._enterable = this.option.tooltip.enterable;
+                if (!this._enterable && this._tDom.className.indexOf(zrConfig.elementClassName) < 0) {
+                    this._tDom.className += ' ' + zrConfig.elementClassName;
+                }
             }
             if (this.showing) {
                 var self = this;
@@ -7648,7 +7656,7 @@ define('zrender/zrender', [
             var timelineOption = self.timelineOption;
             self.currentIndex %= timelineOption.data.length;
             var curOption = self.options[self.currentIndex] || {};
-            self.myChart.setOption(curOption, timelineOption.notMerge);
+            self.myChart._setOption(curOption, timelineOption.notMerge, true);
             self.messageCenter.dispatch(ecConfig.EVENT.TIMELINE_CHANGED, null, {
                 currentIndex: self.currentIndex,
                 data: timelineOption.data[self.currentIndex].name != null ? timelineOption.data[self.currentIndex].name : timelineOption.data[self.currentIndex]
@@ -10621,6 +10629,14 @@ define('zrender/zrender', [
         'touchend',
         'touchmove'
     ];
+    var isZRenderElement = function (event) {
+        if (window.G_vmlCanvasManager) {
+            return true;
+        }
+        event = event || window.event;
+        var target = event.toElement || event.relatedTarget || event.srcElement || event.target;
+        return target && target.className.match(config.elementClassName);
+    };
     var domHandlers = {
         resize: function (event) {
             event = event || window.event;
@@ -10629,6 +10645,9 @@ define('zrender/zrender', [
             this.dispatch(EVENT.RESIZE, event);
         },
         click: function (event) {
+            if (!isZRenderElement(event)) {
+                return;
+            }
             event = this._zrenderEventFixed(event);
             var _lastHover = this._lastHover;
             if (_lastHover && _lastHover.clickable || !_lastHover) {
@@ -10639,6 +10658,9 @@ define('zrender/zrender', [
             this._mousemoveHandler(event);
         },
         dblclick: function (event) {
+            if (!isZRenderElement(event)) {
+                return;
+            }
             event = event || window.event;
             event = this._zrenderEventFixed(event);
             var _lastHover = this._lastHover;
@@ -10650,6 +10672,9 @@ define('zrender/zrender', [
             this._mousemoveHandler(event);
         },
         mousewheel: function (event) {
+            if (!isZRenderElement(event)) {
+                return;
+            }
             event = this._zrenderEventFixed(event);
             var delta = event.wheelDelta || -event.detail;
             var scale = delta > 0 ? 1.1 : 1 / 1.1;
@@ -10681,6 +10706,9 @@ define('zrender/zrender', [
             this._mousemoveHandler(event);
         },
         mousemove: function (event) {
+            if (!isZRenderElement(event)) {
+                return;
+            }
             if (this.painter.isLoading()) {
                 return;
             }
@@ -10737,6 +10765,9 @@ define('zrender/zrender', [
             }
         },
         mouseout: function (event) {
+            if (!isZRenderElement(event)) {
+                return;
+            }
             event = this._zrenderEventFixed(event);
             var element = event.toElement || event.relatedTarget;
             if (element != this.root) {
@@ -10761,6 +10792,9 @@ define('zrender/zrender', [
             this.dispatch(EVENT.GLOBALOUT, event);
         },
         mousedown: function (event) {
+            if (!isZRenderElement(event)) {
+                return;
+            }
             this._clickThreshold = 0;
             if (this._lastDownButton == 2) {
                 this._lastDownButton = event.button;
@@ -10775,6 +10809,9 @@ define('zrender/zrender', [
             this._lastDownButton = event.button;
         },
         mouseup: function (event) {
+            if (!isZRenderElement(event)) {
+                return;
+            }
             event = this._zrenderEventFixed(event);
             this.root.style.cursor = 'default';
             this._isMouseDown = 0;
@@ -10784,12 +10821,18 @@ define('zrender/zrender', [
             this._processDragEnd(event);
         },
         touchstart: function (event) {
+            if (!isZRenderElement(event)) {
+                return;
+            }
             event = this._zrenderEventFixed(event, true);
             this._lastTouchMoment = new Date();
             this._mobileFindFixed(event);
             this._mousedownHandler(event);
         },
         touchmove: function (event) {
+            if (!isZRenderElement(event)) {
+                return;
+            }
             event = this._zrenderEventFixed(event, true);
             this._mousemoveHandler(event);
             if (this._isDragging) {
@@ -10797,6 +10840,9 @@ define('zrender/zrender', [
             }
         },
         touchend: function (event) {
+            if (!isZRenderElement(event)) {
+                return;
+            }
             event = this._zrenderEventFixed(event, true);
             this._mouseupHandler(event);
             var now = new Date();
@@ -11182,6 +11228,7 @@ define('zrender/zrender', [
             '-webkit-touch-callout:none;'
         ].join('');
         this._bgDom.setAttribute('data-zr-dom-id', 'bg');
+        this._bgDom.className = config.elementClassName;
         domRoot.appendChild(this._bgDom);
         this._bgDom.onselectstart = returnFalse;
         var hoverLayer = new Layer('_zrender_hover_', this);
@@ -11728,17 +11775,17 @@ define('zrender/zrender', [
             return;
         }
         el.updateTransform();
-        if (el.type == 'group') {
-            if (el.clipShape) {
-                el.clipShape.parent = el;
-                el.clipShape.updateTransform();
-                if (clipShapes) {
-                    clipShapes = clipShapes.slice();
-                    clipShapes.push(el.clipShape);
-                } else {
-                    clipShapes = [el.clipShape];
-                }
+        if (el.clipShape) {
+            el.clipShape.parent = el;
+            el.clipShape.updateTransform();
+            if (clipShapes) {
+                clipShapes = clipShapes.slice();
+                clipShapes.push(el.clipShape);
+            } else {
+                clipShapes = [el.clipShape];
             }
+        }
+        if (el.type == 'group') {
             for (var i = 0; i < el._children.length; i++) {
                 var child = el._children[i];
                 child.__dirty = el.__dirty || child.__dirty;
@@ -12589,6 +12636,7 @@ define('zrender/zrender', [
         this.dom.style['user-select'] = 'none';
         this.dom.style['-webkit-touch-callout'] = 'none';
         this.dom.style['-webkit-tap-highlight-color'] = 'rgba(0,0,0,0)';
+        this.dom.className = config.elementClassName;
         vmlCanvasManager && vmlCanvasManager.initElement(this.dom);
         this.domBack = null;
         this.ctxBack = null;
@@ -14310,13 +14358,11 @@ define('zrender/zrender', [
     return Transformable;
 });define('zrender/Group', [
     'require',
-    './macro',
     './tool/guid',
     './tool/util',
     './mixin/Transformable',
     './mixin/Eventful'
 ], function (require) {
-    var macro = require('./macro');
     var guid = require('./tool/guid');
     var util = require('./tool/util');
     var Transformable = require('./mixin/Transformable');
@@ -14435,41 +14481,7 @@ define('zrender/zrender', [
     util.merge(Group.prototype, Transformable.prototype, true);
     util.merge(Group.prototype, Eventful.prototype, true);
     return Group;
-});(function (global) {
-    var DefaultEnv = {};
-    var env = DefaultEnv;
-    function accessByDot(obj, key) {
-        key = (key || '').split('.');
-        while (obj && key.length) {
-            obj = obj[key.shift()];
-        }
-        return obj;
-    }
-    var macro = {
-        setEnv: function (cfg) {
-            if (cfg) {
-                env = cfg;
-            }
-        },
-        isDefined: function (key) {
-            return !!accessByDot(env, key);
-        },
-        isNotDefined: function (key) {
-            return !accessByDot(env, key);
-        },
-        isEqual: function (key, value) {
-            return accessByDot(env, key) === value;
-        },
-        isNotEqual: function (key, value) {
-            return accessByDot(env, key) !== value;
-        }
-    };
-    if (typeof exports === 'object' && typeof module === 'object') {
-        exports = module.exports = macro;
-    } else if (typeof define === 'function' && define.amd) {
-        define('zrender/macro', [], macro);
-    }
-}(this));define('zrender/animation/Clip', [
+});define('zrender/animation/Clip', [
     'require',
     './easing'
 ], function (require) {
@@ -15190,8 +15202,8 @@ define('zrender/zrender', [
             var shapeList = this._markPoint(seriesIndex, markPoint);
             for (var i = 0, l = shapeList.length; i < l; i++) {
                 var tarShape = shapeList[i];
-                tarShape.zlevel = this.getZlevelBase();
-                tarShape.z = this.getZBase() + 1;
+                tarShape.zlevel = serie.zlevel;
+                tarShape.z = serie.z + 1;
                 for (var key in attachStyle) {
                     tarShape[key] = zrUtil.clone(attachStyle[key]);
                 }
@@ -15249,8 +15261,8 @@ define('zrender/zrender', [
                     zrUtil.merge(shapeBundle.style, firstShape.style);
                     zrUtil.merge(shapeBundle.highlightStyle = {}, firstShape.highlightStyle);
                     shapeBundle.style.brushType = 'stroke';
-                    shapeBundle.zlevel = this.getZlevelBase();
-                    shapeBundle.z = this.getZBase() + 1;
+                    shapeBundle.zlevel = serie.zlevel;
+                    shapeBundle.z = serie.z + 1;
                     shapeBundle.hoverable = false;
                     for (var key in attachStyle) {
                         shapeBundle[key] = zrUtil.clone(attachStyle[key]);
@@ -15266,8 +15278,8 @@ define('zrender/zrender', [
             } else {
                 for (var i = 0, l = shapeList.length; i < l; i++) {
                     var tarShape = shapeList[i];
-                    tarShape.zlevel = this.getZlevelBase();
-                    tarShape.z = this.getZBase() + 1;
+                    tarShape.zlevel = serie.zlevel;
+                    tarShape.z = serie.z + 1;
                     for (var key in attachStyle) {
                         tarShape[key] = zrUtil.clone(attachStyle[key]);
                     }
@@ -15831,7 +15843,7 @@ define('zrender/zrender', [
             if (this.canvasSupported) {
                 this.zr.modLayer(zlevel, {
                     motionBlur: true,
-                    lastFrameAlpha: 0.95
+                    lastFrameAlpha: this.option.effectBlendAlpha || ecConfig.effectBlendAlpha
                 });
             }
             var shape;
@@ -17766,7 +17778,8 @@ define('zrender/zrender', [
         parsePercent: number.parsePercent,
         parseCenter: number.parseCenter,
         parseRadius: number.parseRadius,
-        numAddCommas: number.addCommas
+        numAddCommas: number.addCommas,
+        getPrecision: number.getPrecision
     };
     return Base;
 });define('echarts/layout/EdgeBundling', [
@@ -18863,11 +18876,21 @@ define('zrender/zrender', [
         x = (x + '').split('.');
         return x[0].replace(/(\d{1,3})(?=(?:\d{3})+(?!\d))/g, '$1,') + (x.length > 1 ? '.' + x[1] : '');
     }
+    function getPrecision(val) {
+        var e = 1;
+        var count = 0;
+        while (Math.round(val * e) / e !== val) {
+            e *= 10;
+            count++;
+        }
+        return count;
+    }
     return {
         parsePercent: parsePercent,
         parseCenter: parseCenter,
         parseRadius: parseRadius,
-        addCommas: addCommas
+        addCommas: addCommas,
+        getPrecision: getPrecision
     };
 });define('echarts/data/KDTree', [
     'require',
@@ -19094,7 +19117,9 @@ define('zrender/zrender', [
         this._tDom = document.createElement('div');
         this._textArea = document.createElement('textArea');
         this._buttonRefresh = document.createElement('button');
+        this._buttonRefresh.setAttribute('type', 'button');
         this._buttonClose = document.createElement('button');
+        this._buttonClose.setAttribute('type', 'button');
         this._hasShow = false;
         this._zrHeight = zr.getHeight();
         this._zrWidth = zr.getWidth();

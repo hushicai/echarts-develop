@@ -74,12 +74,12 @@ exports.amd = {
     packages: [
         {
             name: 'echarts',
-            location: './submodule/echarts/src',
+            location: './submodule/ecomfe/echarts/src',
             main: 'echarts'
         },
         {
             name: 'zrender',
-            location: './submodule/zrender/src',
+            location: './submodule/ecomfe/zrender/src',
             main: 'zrender'
         }
     ]
