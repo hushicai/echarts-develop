@@ -1,3 +1,47 @@
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+/**
+ * @file test
+ * @author hushicai(bluthcy@gmail.com)
+ */
+
+(function (global) {
+
+    var echarts = require('echarts').echarts;
+
+    var el = document.getElementById('test');
+    var ec = echarts.init(el);
+
+    ec.setOption({
+        title: {
+            text: 'test'
+        },
+        xAxis: [
+            {
+                type: 'category',
+                boundaryGap: false,
+                data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value',
+                axisLabel: {
+                    formatter: '{value} °C'
+                }
+            }
+        ],
+        series: [
+            {
+                name: 'test',
+                type: 'line',
+                data: [1, 2, 3]
+            }
+        ]
+    });
+
+})(this);
+
+},{"echarts":2}],2:[function(require,module,exports){
 (function(_global){
 var require, define;
 (function () {
@@ -163,8 +207,8 @@ define('echarts/echarts', [
     var _idBase = new Date() - 0;
     var _instances = {};
     var DOM_ATTRIBUTE_KEY = '_echarts_instance_';
-    self.version = '2.2.5';
-    self.dependencies = { zrender: '2.1.0' };
+    self.version = '2.2.6';
+    self.dependencies = { zrender: '2.1.1' };
     self.init = function (dom, theme) {
         var zrender = require('zrender');
         if (zrender.version.replace('.', '') - 0 < self.dependencies.zrender.replace('.', '') - 0) {
@@ -1669,7 +1713,7 @@ define('zrender/zrender', [
     var Animation = require('./animation/Animation');
     var _instances = {};
     var zrender = {};
-    zrender.version = '2.1.0';
+    zrender.version = '2.1.1';
     zrender.init = function (dom) {
         var zr = new ZRender(guid(), dom);
         _instances[zr.id] = zr;
@@ -9152,8 +9196,8 @@ define('zrender/zrender', [
             this._isMouseDown = 0;
             this.dispatch(EVENT.RESIZE, event);
         },
-        click: function (event) {
-            if (!isZRenderElement(event)) {
+        click: function (event, manually) {
+            if (!isZRenderElement(event) && !manually) {
                 return;
             }
             event = this._zrenderEventFixed(event);
@@ -9165,8 +9209,8 @@ define('zrender/zrender', [
             }
             this._mousemoveHandler(event);
         },
-        dblclick: function (event) {
-            if (!isZRenderElement(event)) {
+        dblclick: function (event, manually) {
+            if (!isZRenderElement(event) && !manually) {
                 return;
             }
             event = event || window.event;
@@ -9179,8 +9223,8 @@ define('zrender/zrender', [
             }
             this._mousemoveHandler(event);
         },
-        mousewheel: function (event) {
-            if (!isZRenderElement(event)) {
+        mousewheel: function (event, manually) {
+            if (!isZRenderElement(event) && !manually) {
                 return;
             }
             event = this._zrenderEventFixed(event);
@@ -9213,8 +9257,8 @@ define('zrender/zrender', [
             this._dispatchAgency(this._lastHover, EVENT.MOUSEWHEEL, event);
             this._mousemoveHandler(event);
         },
-        mousemove: function (event) {
-            if (!isZRenderElement(event)) {
+        mousemove: function (event, manually) {
+            if (!isZRenderElement(event) && !manually) {
                 return;
             }
             if (this.painter.isLoading()) {
@@ -9272,8 +9316,8 @@ define('zrender/zrender', [
                 this.painter.refreshHover();
             }
         },
-        mouseout: function (event) {
-            if (!isZRenderElement(event)) {
+        mouseout: function (event, manually) {
+            if (!isZRenderElement(event) && !manually) {
                 return;
             }
             event = this._zrenderEventFixed(event);
@@ -9299,8 +9343,8 @@ define('zrender/zrender', [
             }
             this.dispatch(EVENT.GLOBALOUT, event);
         },
-        mousedown: function (event) {
-            if (!isZRenderElement(event)) {
+        mousedown: function (event, manually) {
+            if (!isZRenderElement(event) && !manually) {
                 return;
             }
             this._clickThreshold = 0;
@@ -9316,8 +9360,8 @@ define('zrender/zrender', [
             this._dispatchAgency(this._lastHover, EVENT.MOUSEDOWN, event);
             this._lastDownButton = event.button;
         },
-        mouseup: function (event) {
-            if (!isZRenderElement(event)) {
+        mouseup: function (event, manually) {
+            if (!isZRenderElement(event) && !manually) {
                 return;
             }
             event = this._zrenderEventFixed(event);
@@ -9328,8 +9372,8 @@ define('zrender/zrender', [
             this._processDrop(event);
             this._processDragEnd(event);
         },
-        touchstart: function (event) {
-            if (!isZRenderElement(event)) {
+        touchstart: function (event, manually) {
+            if (!isZRenderElement(event) && !manually) {
                 return;
             }
             event = this._zrenderEventFixed(event, true);
@@ -9337,8 +9381,8 @@ define('zrender/zrender', [
             this._mobileFindFixed(event);
             this._mousedownHandler(event);
         },
-        touchmove: function (event) {
-            if (!isZRenderElement(event)) {
+        touchmove: function (event, manually) {
+            if (!isZRenderElement(event) && !manually) {
                 return;
             }
             event = this._zrenderEventFixed(event, true);
@@ -9347,8 +9391,8 @@ define('zrender/zrender', [
                 eventTool.stop(event);
             }
         },
-        touchend: function (event) {
-            if (!isZRenderElement(event)) {
+        touchend: function (event, manually) {
+            if (!isZRenderElement(event) && !manually) {
                 return;
             }
             event = this._zrenderEventFixed(event, true);
@@ -9368,9 +9412,9 @@ define('zrender/zrender', [
             this.painter.clearHover();
         }
     };
-    function bind1Arg(handler, context) {
-        return function (e) {
-            return handler.call(context, e);
+    function bind2Arg(handler, context) {
+        return function (arg1, arg2) {
+            return handler.call(context, arg1, arg2);
         };
     }
     function bind3Arg(handler, context) {
@@ -9382,7 +9426,7 @@ define('zrender/zrender', [
         var len = domHandlerNames.length;
         while (len--) {
             var name = domHandlerNames[len];
-            instance['_' + name + 'Handler'] = bind1Arg(domHandlers[name], instance);
+            instance['_' + name + 'Handler'] = bind2Arg(domHandlers[name], instance);
         }
     }
     var Handler = function (root, storage, painter) {
@@ -9439,7 +9483,7 @@ define('zrender/zrender', [
         case EVENT.MOUSEDOWN:
         case EVENT.MOUSEUP:
         case EVENT.MOUSEOUT:
-            this['_' + eventName + 'Handler'](eventArgs);
+            this['_' + eventName + 'Handler'](eventArgs, true);
             break;
         }
     };
@@ -10459,9 +10503,13 @@ define('zrender/zrender', [
             this._clips.push(clip);
         },
         remove: function (clip) {
-            var idx = util.indexOf(this._clips, clip);
-            if (idx >= 0) {
-                this._clips.splice(idx, 1);
+            if (clip.__inStep) {
+                clip.__needsRemove = true;
+            } else {
+                var idx = util.indexOf(this._clips, clip);
+                if (idx >= 0) {
+                    this._clips.splice(idx, 1);
+                }
             }
         },
         _update: function () {
@@ -10473,14 +10521,16 @@ define('zrender/zrender', [
             var deferredClips = [];
             for (var i = 0; i < len; i++) {
                 var clip = clips[i];
+                clip.__inStep = true;
                 var e = clip.step(time);
+                clip.__inStep = false;
                 if (e) {
                     deferredEvents.push(e);
                     deferredClips.push(clip);
                 }
             }
             for (var i = 0; i < len;) {
-                if (clips[i]._needsRemove) {
+                if (clips[i].__needsRemove) {
                     clips[i] = clips[len - 1];
                     clips.pop();
                     len--;
@@ -13025,7 +13075,7 @@ define('zrender/zrender', [
                     this.restart();
                     return 'restart';
                 }
-                this._needsRemove = true;
+                this.__needsRemove = true;
                 return 'destroy';
             }
             return null;
@@ -13034,7 +13084,7 @@ define('zrender/zrender', [
             var time = new Date().getTime();
             var remainder = (time - this._startTime) % this._life;
             this._startTime = new Date().getTime() - remainder + this.gap;
-            this._needsRemove = false;
+            this.__needsRemove = false;
         },
         fire: function (eventType, arg) {
             for (var i = 0, len = this._targetPool.length; i < len; i++) {
@@ -47426,7 +47476,7 @@ define('zrender/zrender', [
     return EventRiver;
 });define('echarts/layout/eventRiver', ['require'], function (require) {
     function eventRiverLayout(series, intervalX, area) {
-        var space = 5;
+        var space = 4;
         var scale = intervalX;
         function importanceSort(a, b) {
             var x = a.importance;
@@ -47479,112 +47529,128 @@ define('zrender/zrender', [
                 }
             }
         }
-        var root = segmentTreeBuild(Math.floor(minTime), Math.ceil(maxTime));
-        var totalMaxY = 0;
+        minTime = ~~minTime;
+        maxTime = ~~maxTime;
+        var flagForOffset = function () {
+            var length = maxTime - minTime + 1 + ~~intervalX;
+            if (length <= 0) {
+                return [0];
+            }
+            var result = [];
+            while (length--) {
+                result.push(0);
+            }
+            return result;
+        }();
+        var flagForPos = flagForOffset.slice(0);
+        var bubbleData = [];
+        var totalMaxy = 0;
+        var totalOffset = 0;
         for (var i = 0; i < series.length; i++) {
             for (var j = 0; j < series[i].data.length; j++) {
                 var e = series[i].data[j];
                 e.time = [];
                 e.value = [];
+                var tmp;
+                var maxy = 0;
                 for (var k = 0; k < series[i].data[j].evolution.length; k++) {
-                    e.time.push(series[i].data[j].evolution[k].timeScale);
-                    e.value.push(series[i].data[j].evolution[k].valueScale);
+                    tmp = series[i].data[j].evolution[k];
+                    e.time.push(tmp.timeScale);
+                    e.value.push(tmp.valueScale);
+                    maxy = Math.max(maxy, tmp.valueScale);
                 }
-                var mxIndex = indexOf(e.value, Math.max.apply(Math, e.value));
-                var maxY = segmentTreeQuery(root, e.time[mxIndex], e.time[mxIndex + 1]);
-                var k = 0;
-                e.y = maxY + e.value[mxIndex] / 2 + space;
-                for (k = 0; k < e.time.length - 1; k++) {
-                    var curMaxY = segmentTreeQuery(root, e.time[k], e.time[k + 1]);
-                    if (e.y - e.value[k] / 2 - space < curMaxY) {
-                        e.y = curMaxY + e.value[k] / 2 + space;
-                    }
-                }
-                var curMaxY = segmentTreeQuery(root, e.time[k], e.time[k] + scale);
-                if (e.y - e.value[k] / 2 - space < curMaxY) {
-                    e.y = curMaxY + e.value[k] / 2 + space;
-                }
-                series[i].y = e.y;
-                totalMaxY = Math.max(totalMaxY, e.y + e.value[mxIndex] / 2);
-                for (k = 0; k < e.time.length - 1; k++) {
-                    segmentTreeInsert(root, e.time[k], e.time[k + 1], e.y + e.value[k] / 2);
-                }
-                segmentTreeInsert(root, e.time[k], e.time[k] + scale, e.y + e.value[k] / 2);
+                bubbleBound(e, intervalX, minTime);
+                e.y = findLocation(flagForPos, e, function (e, index) {
+                    return e.ypx[index];
+                });
+                e._offset = findLocation(flagForOffset, e, function () {
+                    return space;
+                });
+                totalMaxy = Math.max(totalMaxy, e.y + maxy);
+                totalOffset = Math.max(totalOffset, e._offset);
+                bubbleData.push(e);
             }
         }
-        scaleY(series, area, totalMaxY, space);
+        scaleY(bubbleData, area, totalMaxy, totalOffset);
     }
-    function scaleY(series, area, maxY, space) {
+    function scaleY(bubbleData, area, maxY, offset) {
+        var height = area.height;
+        var offsetScale = offset / height > 0.5 ? 0.5 : 1;
         var yBase = area.y;
-        var yScale = (area.height - space) / maxY;
-        for (var i = 0; i < series.length; i++) {
-            series[i].y = series[i].y * yScale + yBase;
-            var eventList = series[i].data;
-            for (var j = 0; j < eventList.length; j++) {
-                eventList[j].y = eventList[j].y * yScale + yBase;
-                var evolutionList = eventList[j].evolution;
-                for (var k = 0; k < evolutionList.length; k++) {
-                    evolutionList[k].valueScale *= yScale * 1;
-                }
+        var yScale = (area.height - offset) / maxY;
+        for (var i = 0, length = bubbleData.length; i < length; i++) {
+            var e = bubbleData[i];
+            e.y = yBase + yScale * e.y + e._offset * offsetScale;
+            delete e.time;
+            delete e.value;
+            delete e.xpx;
+            delete e.ypx;
+            delete e._offset;
+            var evolutionList = e.evolution;
+            for (var k = 0, klen = evolutionList.length; k < klen; k++) {
+                evolutionList[k].valueScale *= yScale;
             }
         }
     }
-    function segmentTreeBuild(left, right) {
-        var root = {
-            'left': left,
-            'right': right,
-            'leftChild': null,
-            'rightChild': null,
-            'maxValue': 0
+    function line(x0, y0, x1, y1) {
+        if (x0 === x1) {
+            throw new Error('x0 is equal with x1!!!');
+        }
+        if (y0 === y1) {
+            return function () {
+                return y0;
+            };
+        }
+        var k = (y0 - y1) / (x0 - x1);
+        var b = (y1 * x0 - y0 * x1) / (x0 - x1);
+        return function (x) {
+            return k * x + b;
         };
-        if (left + 1 < right) {
-            var mid = Math.round((left + right) / 2);
-            root.leftChild = segmentTreeBuild(left, mid);
-            root.rightChild = segmentTreeBuild(mid, right);
-        }
-        return root;
     }
-    function segmentTreeQuery(root, left, right) {
-        if (right - left < 1) {
-            return 0;
-        }
-        var mid = Math.round((root.left + root.right) / 2);
-        var result = 0;
-        if (left == root.left && right == root.right) {
-            result = root.maxValue;
-        } else if (right <= mid && root.leftChild != null) {
-            result = segmentTreeQuery(root.leftChild, left, right);
-        } else if (left >= mid && root.rightChild != null) {
-            result = segmentTreeQuery(root.rightChild, left, right);
-        } else {
-            var leftValue = 0;
-            var rightValue = 0;
-            if (root.leftChild != null) {
-                leftValue = segmentTreeQuery(root.leftChild, left, mid);
+    function bubbleBound(e, intervalX, minX) {
+        var space = ~~intervalX;
+        var length = e.time.length;
+        e.xpx = [];
+        e.ypx = [];
+        var i = 0;
+        var x0 = 0;
+        var x1 = 0;
+        var y0 = 0;
+        var y1 = 0;
+        var newline;
+        for (; i < length; i++) {
+            x0 = ~~e.time[i];
+            y0 = e.value[i] / 2;
+            if (i === length - 1) {
+                x1 = x0 + space;
+                y1 = 0;
+            } else {
+                x1 = ~~e.time[i + 1];
+                y1 = e.value[i + 1] / 2;
             }
-            if (root.rightChild != null) {
-                rightValue = segmentTreeQuery(root.rightChild, mid, right);
+            newline = line(x0, y0, x1, y1);
+            for (var x = x0; x < x1; x++) {
+                e.xpx.push(x - minX);
+                e.ypx.push(newline(x));
             }
-            result = leftValue > rightValue ? leftValue : rightValue;
         }
-        return result;
+        e.xpx.push(x1 - minX);
+        e.ypx.push(y1);
     }
-    function segmentTreeInsert(root, left, right, value) {
-        if (root == null) {
-            return;
+    function findLocation(flags, e, yvalue) {
+        var pos = 0;
+        var length = e.xpx.length;
+        var i = 0;
+        var y;
+        for (; i < length; i++) {
+            y = yvalue(e, i);
+            pos = Math.max(pos, y + flags[e.xpx[i]]);
         }
-        var mid = Math.round((root.left + root.right) / 2);
-        root.maxValue = root.maxValue > value ? root.maxValue : value;
-        if (Math.floor(left * 10) == Math.floor(root.left * 10) && Math.floor(right * 10) == Math.floor(root.right * 10)) {
-            return;
-        } else if (right <= mid) {
-            segmentTreeInsert(root.leftChild, left, right, value);
-        } else if (left >= mid) {
-            segmentTreeInsert(root.rightChild, left, right, value);
-        } else {
-            segmentTreeInsert(root.leftChild, left, mid, value);
-            segmentTreeInsert(root.rightChild, mid, right, value);
+        for (i = 0; i < length; i++) {
+            y = yvalue(e, i);
+            flags[e.xpx[i]] = pos + y;
         }
+        return pos;
     }
     return eventRiverLayout;
 });define('echarts/chart/venn', [
@@ -48526,4 +48592,6 @@ require("echarts/chart/treemap");
 _global['echarts'] = echarts;
 _global['zrender'] = zrender;
 
-})(window);
+})(this);
+
+},{"../../tool/vector":undefined,"../chart":undefined,"../component":undefined,"../component/axis":undefined,"../component/base":undefined,"../component/dataRange":undefined,"../component/dataZoom":undefined,"../component/grid":undefined,"../component/polar":undefined,"../component/roamController":undefined,"../config":undefined,"../data/Graph":undefined,"../data/KDTree":undefined,"../data/Tree":undefined,"../dep/excanvas":undefined,"../layer/heatmap":undefined,"../layout/Chord":undefined,"../layout/EdgeBundling":undefined,"../layout/Force":undefined,"../layout/TreeMap":undefined,"../layout/eventRiver":undefined,"../mixin/Eventful":undefined,"../mixin/Transformable":undefined,"../shape/Circle":undefined,"../shape/Droplet":undefined,"../shape/Line":undefined,"../shape/Rectangle":undefined,"../shape/Ring":undefined,"../shape/Sector":undefined,"../shape/Text":undefined,"../tool/area":undefined,"../tool/color":undefined,"../tool/computeBoundingBox":undefined,"../tool/event":undefined,"../tool/guid":undefined,"../tool/log":undefined,"../tool/math":undefined,"../tool/matrix":undefined,"../tool/util":undefined,"../tool/vector":undefined,"../util/accMath":undefined,"../util/coordinates":undefined,"../util/date":undefined,"../util/ecAnimation":undefined,"../util/ecData":undefined,"../util/ecEffect":undefined,"../util/ecQuery":undefined,"../util/mapData/geoCoord":undefined,"../util/mapData/params":undefined,"../util/mapData/textFixed":undefined,"../util/number":undefined,"../util/projection/normal":undefined,"../util/projection/svg":undefined,"../util/shape/Candle":undefined,"../util/shape/Chain":undefined,"../util/shape/Cross":undefined,"../util/shape/GaugePointer":undefined,"../util/shape/HalfSmoothPolygon":undefined,"../util/shape/HandlePolygon":undefined,"../util/shape/Icon":undefined,"../util/shape/MarkLine":undefined,"../util/shape/Ribbon":undefined,"../util/shape/Symbol":undefined,"../util/smartLogSteps":undefined,"../util/smartSteps":undefined,"./Base":undefined,"./Clip":undefined,"./Group":undefined,"./Handler":undefined,"./Icon":undefined,"./Layer":undefined,"./Painter":undefined,"./Polygon":undefined,"./Storage":undefined,"./animation/Animation":undefined,"./base":undefined,"./categoryAxis":undefined,"./chart":undefined,"./chart/island":undefined,"./component":undefined,"./component/legend":undefined,"./component/timeline":undefined,"./component/title":undefined,"./component/toolbox":undefined,"./component/tooltip":undefined,"./config":undefined,"./curve":undefined,"./dataView":undefined,"./dep/excanvas":undefined,"./easing":undefined,"./forceLayoutWorker":undefined,"./loadingEffect/Base":undefined,"./mixin/Eventful":undefined,"./mixin/Transformable":undefined,"./normalIsCover":undefined,"./number":undefined,"./quickSelect":undefined,"./shape/Image":undefined,"./theme/infographic":undefined,"./theme/macarons":undefined,"./tool/env":undefined,"./tool/event":undefined,"./tool/guid":undefined,"./tool/log":undefined,"./tool/matrix":undefined,"./tool/util":undefined,"./tool/vector":undefined,"./util":undefined,"./util/PathProxy":undefined,"./util/dashedLineTo":undefined,"./util/ecData":undefined,"./util/smoothBezier":undefined,"./util/smoothSpline":undefined,"./valueAxis":undefined,"./vector":undefined,"echarts":2,"echarts/chart/bar":undefined,"echarts/chart/chord":undefined,"echarts/chart/eventRiver":undefined,"echarts/chart/force":undefined,"echarts/chart/funnel":undefined,"echarts/chart/gauge":undefined,"echarts/chart/k":undefined,"echarts/chart/line":undefined,"echarts/chart/map":undefined,"echarts/chart/pie":undefined,"echarts/chart/radar":undefined,"echarts/chart/scatter":undefined,"echarts/chart/treemap":undefined,"echarts/chart/venn":undefined,"echarts/config":undefined,"echarts/util/mapData/params":undefined,"zrender":undefined,"zrender/animation/Animation":undefined,"zrender/animation/Clip":undefined,"zrender/animation/easing":undefined,"zrender/config":undefined,"zrender/loadingEffect/Bar":undefined,"zrender/loadingEffect/Bubble":undefined,"zrender/loadingEffect/DynamicLine":undefined,"zrender/loadingEffect/Ring":undefined,"zrender/loadingEffect/Spin":undefined,"zrender/loadingEffect/Whirling":undefined,"zrender/shape/Base":undefined,"zrender/shape/BezierCurve":undefined,"zrender/shape/Circle":undefined,"zrender/shape/Droplet":undefined,"zrender/shape/Ellipse":undefined,"zrender/shape/Heart":undefined,"zrender/shape/Image":undefined,"zrender/shape/Line":undefined,"zrender/shape/Path":undefined,"zrender/shape/Polygon":undefined,"zrender/shape/Polyline":undefined,"zrender/shape/Rectangle":undefined,"zrender/shape/Ring":undefined,"zrender/shape/Sector":undefined,"zrender/shape/ShapeBundle":undefined,"zrender/shape/Star":undefined,"zrender/shape/Text":undefined,"zrender/shape/util/PathProxy":undefined,"zrender/shape/util/dashedLineTo":undefined,"zrender/shape/util/smoothBezier":undefined,"zrender/tool/area":undefined,"zrender/tool/color":undefined,"zrender/tool/curve":undefined,"zrender/tool/env":undefined,"zrender/tool/event":undefined,"zrender/tool/math":undefined,"zrender/tool/matrix":undefined,"zrender/tool/util":undefined,"zrender/tool/vector":undefined}]},{},[1]);

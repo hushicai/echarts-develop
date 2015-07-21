@@ -5,10 +5,10 @@
 
 var path = require('path');
 
-var Alias = {
-    ECHARTS: path.resolve(__dirname, './submodule/ecomfe/echarts/src'),
-    ZRENDER: path.join(__dirname, './submodule/ecomfe/zrender/src')
-};
+// var Alias = {
+    // ECHARTS: path.resolve(__dirname, './submodule/ecomfe/echarts/src'),
+    // ZRENDER: path.join(__dirname, './submodule/ecomfe/zrender/src')
+// };
 
 module.exports = {
     context: __dirname,

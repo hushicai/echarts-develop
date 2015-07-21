@@ -4,6 +4,7 @@
  */
 
 (function (global) {
+
     var echarts = require('echarts').echarts;
 
     var el = document.getElementById('test');
@@ -36,5 +37,5 @@
             }
         ]
     });
-})(window);
 
+})(this);
