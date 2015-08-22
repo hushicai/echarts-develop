@@ -4,7 +4,9 @@
  */
 
 (function (global) {
-    var echarts = require('echarts').echarts;
+    var echarts = require('echarts');
+
+    require('echarts/chart/line');
 
     var el = document.getElementById('test');
     var ec = echarts.init(el);

@@ -9,7 +9,7 @@
 <body>
     <div id="test" style="width: 800px; height: 400px;"></div>
     <link rel="import" href="./__script.html" />
-    <script src="../submodule/echarts/doc/example/timelineOption.js"></script>
+    <script src="../submodule/ecomfe/echarts/doc/example/timelineOption.js"></script>
     <script>
         require(['echarts', 'echarts/chart/bar'], function(echarts) {
             var option = {
@@ -310,6 +310,11 @@
             var el = document.getElementById('test');
             var ec = echarts.init(el);
             ec.setOption(option);
+
+            window.addEventListener('resize', function (e) {
+                console.log('resize');
+                ec.resize();
+            });
         });
     </script>
 </body>
